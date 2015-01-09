@@ -1,7 +1,7 @@
 Summary: Run all httpd process under user's access right.
 Name: mod_ruid2
 Version: 0.9.8
-Release: 1%{dist}
+Release: 2%{dist}
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
 Source0: http://sourceforge.net/projects/mod-ruid/files/mod_ruid2/mod_ruid2-%{version}.tar.bz2
@@ -22,7 +22,7 @@ WebDAV, PHP, and so on under user's right, this module is useful.
 %setup -q
 
 %build
-%{_sbindir}/apxs -l cap -c %{name}.c
+%{_bindir}/apxs -l cap -c %{name}.c
 mv .libs/%{name}.so .
 %{__strip} -g %{name}.so
 
@@ -32,9 +32,9 @@ mkdir -p $RPM_BUILD_ROOT%{_libdir}/httpd/modules
 install -m755 %{name}.so $RPM_BUILD_ROOT%{_libdir}/httpd/modules
 
 # Install the config file
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.modules.d
 install -m 644 ruid2.conf \
-    $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/
+    $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.modules.d/
     
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -43,10 +43,13 @@ install -m 644 ruid2.conf \
 %defattr(644,root,root,755)
 %doc README LICENSE
 %attr(755,root,root)%{_libdir}/httpd/modules/*.so
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/*.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/*.conf
 
 
 %changelog
+* Thu Jan 08 2014 S. Kurt Newman <kurt.newman@cpanel.net> 0.9.8-2
+- Updated for Apache 2.4 directory locations
+
 * Fri Mar 22 2013 Kees Monshouwer <km|monshouwer_com> 0.9.8-1
 - Address reported security bug in chroot mode. Thanks to the
   "cPanel Security Team" for the discovery of this bug.
