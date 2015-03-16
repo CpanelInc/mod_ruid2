@@ -1,0 +1,30 @@
+From 7c6db0813a0732add83cd6c9aab8a591f28c5980 Mon Sep 17 00:00:00 2001
+From: Kurt Newman <kurt.newman@cpanel.net>
+Date: Mon, 16 Mar 2015 16:34:29 -0500
+Subject: [PATCH 1/2] mailman compatibility
+
+Case 77989: Mailman handles its own uid/gid changing.  Don't
+let mod_ruid2 do this.
+---
+ mod_ruid2.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/mod_ruid2.c b/mod_ruid2.c
+index ad1ae8f..53b0690 100644
+--- a/mod_ruid2.c
++++ b/mod_ruid2.c
+@@ -472,6 +472,11 @@ static int ruid_set_perm (request_rec *r, const char *from_func)
+ 	cap_t cap;
+ 	cap_value_t capval[3];
+ 
++	/* We decline if this is a mailman URL, which has its own UID/GID logic */
++	if (r->uri && strncmp(r->uri, "/mailman/", 9) == 0) {
++		return retval;
++	}
++
+ 	cap=cap_get_proc();
+ 	capval[0]=CAP_SETUID;
+ 	capval[1]=CAP_SETGID;
+-- 
+2.2.0
+

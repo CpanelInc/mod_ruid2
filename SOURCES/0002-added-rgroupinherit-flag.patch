@@ -1,0 +1,77 @@
+From ae63a20e441a2dd44b46a4a56d2315b6ce0571f9 Mon Sep 17 00:00:00 2001
+From: Kurt Newman <kurt.newman@cpanel.net>
+Date: Mon, 16 Sep 2013 16:15:20 -0500
+Subject: [PATCH 2/2] added rgroupinherit flag
+
+Case 77157: Add RGroupInherit flag to prevent child processes from inheriting
+Apache user.  This is set to 'off' by default, thus alleviating the need
+to make any changes to templates.
+
+This patch is important because Ruid2 0.9.8 will attempt to inherit the
+Apache user's group list.  In the case of cPanel/WHM, that's the nobody
+user.  Inheriting the nobody group is counter to what the purpose of
+changing users and restricting a user to their own permissions.
+---
+ mod_ruid2.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/mod_ruid2.c b/mod_ruid2.c
+index 53b0690..3e3f089 100644
+--- a/mod_ruid2.c
++++ b/mod_ruid2.c
+@@ -94,6 +94,7 @@ typedef struct
+ 	gid_t min_gid;
+ 	const char *chroot_dir;
+ 	const char *document_root;
++	int groupinherit;
+ } ruid_config_t;
+ 
+ 
+@@ -174,6 +175,7 @@ static void *create_config (apr_pool_t *p, server_rec *s)
+ 	conf->min_gid=RUID_MIN_GID;
+ 	conf->chroot_dir=NULL;
+ 	conf->document_root=NULL;
++	conf->groupinherit=0; /* default "off" behavior */
+ 
+ 	return conf;
+ }
+@@ -288,6 +290,19 @@ static const char *set_documentchroot (cmd_parms *cmd, void *mconfig, const char
+ 	return NULL;
+ }
+ 
++static const char *set_groupinherit ( cmd_parms *cmd, void *dummy, int flag )
++{
++	ruid_config_t *conf = ap_get_module_config (cmd->server->module_config, &ruid2_module);
++	const char *err = ap_check_cmd_context( cmd, NOT_IN_DIR_LOC_FILE | NOT_IN_LIMIT );
++
++	if( err != NULL ) {
++		return err;
++	}
++
++	conf->groupinherit = flag;
++
++	return NULL;
++}
+ 
+ /* configure options in httpd.conf */
+ static const command_rec ruid_cmds[] = {
+@@ -298,6 +313,7 @@ static const command_rec ruid_cmds[] = {
+ 	AP_INIT_TAKE2 ("RDefaultUidGid", set_defuidgid, NULL, RSRC_CONF, "If uid or gid is < than RMinUidGid set[ug]id to this uid gid"),
+ 	AP_INIT_TAKE2 ("RMinUidGid", set_minuidgid, NULL, RSRC_CONF, "Minimal uid or gid file/dir, else set[ug]id to default (RDefaultUidGid)"),
+ 	AP_INIT_TAKE2 ("RDocumentChRoot", set_documentchroot, NULL, RSRC_CONF, "Set chroot directory and the document root inside"),
++	AP_INIT_FLAG ("RGroupInherit", set_groupinherit, NULL, RSRC_CONF, "Inherit supplementary groups from parent process (default: off)" ),
+ 	{NULL}
+ };
+ 
+@@ -506,7 +522,7 @@ static int ruid_set_perm (request_rec *r, const char *from_func)
+ 	}
+ 
+ 	/* set supplementary groups */
+-	if ((dconf->groupsnr == UNSET) && (startup_groupsnr > 0)) {
++	if ((dconf->groupsnr == UNSET) && (startup_groupsnr > 0) && (conf->groupinherit > 0)) {
+ 		memcpy(groups, startup_groups, sizeof(groups));
+ 		groupsnr = startup_groupsnr;
+ 	} else if (dconf->groupsnr > 0) {
+-- 
+2.2.0
+
