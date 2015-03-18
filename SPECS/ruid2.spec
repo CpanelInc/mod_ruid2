@@ -1,52 +1,75 @@
+# Namespace
+%global ns_name ea
+%global module_name mod_ruid2
+
 Summary: Run all httpd process under user's access right.
-Name: mod_ruid2
+Name: %{ns_name}-%{module_name}
 Version: 0.9.8
-Release: 2%{dist}
+Vendor: cPanel, Inc.
+Release: 3%{dist}
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
 Source0: http://sourceforge.net/projects/mod-ruid/files/mod_ruid2/mod_ruid2-%{version}.tar.bz2
 License: Apache Software License version 2
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: httpd-devel >= 2.0.40 libcap-devel
-Requires: httpd >= 2.0.40 libcap
-Obsoletes: mod_ruid
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: ea-apache2-devel >= 2.4.0 libcap-devel
+BuildRequires: libtool
+# NOTE: These 2 BuildRequires statements are needed because of a decision
+# we made in EA4 to allow the user to pick and choose which mpm to work
+# with.  Unfortunately, this prevents YUM from solving dependencies
+# because it doesn't know which package to use.  This tells YUM which
+# to use so it can build this MPM.  We may need to revert this opinion
+# in the future.
+BuildRequires: ea-mod_mpm_prefork
+BuildRequires: ea-mod_cgi
+Requires: ea-apache2-mmn = %{_httpd_mmn}
+Requires: ea-apache2 >= 2.4.0 libcap
+Obsoletes: mod_ruid mod_ruid2
+
+Patch0: 0001-mailman-compatibility.patch
+Patch1: 0002-added-rgroupinherit-flag.patch
 
 %description
 With this module, all httpd process run under user's access right, not nobody or apache.
 mod_ruid2 is similar to mod_suid2, but has better performance than mod_suid2 because it
-doesn`t need to kill httpd children after one request. It makes use of kernel capabilites
+doesn't need to kill httpd children after one request. It makes use of kernel capabilites
 and after receiving a new request suids again. If you want to run apache modules, i.e.
 WebDAV, PHP, and so on under user's right, this module is useful.
 
 %prep
-%setup -q
+: Building %{name} %{version}-%{release} %{_arch} ea-apache2-mmn = %{_httpd_mmn}
+%setup -q -n %{module_name}-%{version}
+%patch0 -p1 -b .mailman
+%patch1 -p1 -b .rgroupinherit
 
 %build
-%{_bindir}/apxs -l cap -c %{name}.c
-mv .libs/%{name}.so .
-%{__strip} -g %{name}.so
+%{_httpd_apxs} -l cap -c %{module_name}.c
+mv .libs/%{module_name}.so .
+%{__strip} -g %{module_name}.so
 
 %install
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_libdir}/httpd/modules
-install -m755 %{name}.so $RPM_BUILD_ROOT%{_libdir}/httpd/modules
+rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_httpd_moddir}
+install -m755 %{module_name}.so %{buildroot}%{_httpd_moddir}/
 
 # Install the config file
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.modules.d
-install -m 644 ruid2.conf \
-    $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.modules.d/
+mkdir -p %{buildroot}%{_httpd_modconfdir}
+install -m 644 ruid2.conf %{buildroot}%{_httpd_modconfdir}/
     
 %clean
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(644,root,root,755)
 %doc README LICENSE
-%attr(755,root,root)%{_libdir}/httpd/modules/*.so
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/*.conf
+%attr(755,root,root)%{_httpd_moddir}/*.so
+%config(noreplace) %{_httpd_modconfdir}/*.conf
 
 
 %changelog
+* Mon Mar 16 2015 S. Kurt Newman <kurt.newman@cpanel.net> 0.9.8-3
+- Now uses ea-apache2 RPM provided by EA4
+
 * Thu Jan 08 2014 S. Kurt Newman <kurt.newman@cpanel.net> 0.9.8-2
 - Updated for Apache 2.4 directory locations
 
