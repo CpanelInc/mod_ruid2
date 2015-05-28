@@ -1,12 +1,12 @@
 # Namespace
-%global ns_name ea_apache24
+%global ns_name ea-apache24
 %global module_name mod_ruid2
 
 Summary: Run all httpd process under user's access right.
 Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
-Release: 4%{dist}
+Release: 5%{dist}
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
 Source0: http://sourceforge.net/projects/mod-ruid/files/mod_ruid2/mod_ruid2-%{version}.tar.bz2
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu May 28 2015 Julian Brown <julian.brown@cpanel.net> 0.9.8-5
+- Corrected ns_name from ea_apache24 to ea-apache24
+
 * Thu May 28 2015 Julian Brown <julian.brown@cpanel.net> 0.9.8-4
 - Now uses ea-apache24 RPM provided by EA4
 
