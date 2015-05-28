@@ -1,18 +1,18 @@
 # Namespace
-%global ns_name ea
+%global ns_name ea_apache24
 %global module_name mod_ruid2
 
 Summary: Run all httpd process under user's access right.
 Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
-Release: 3%{dist}
+Release: 4%{dist}
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
 Source0: http://sourceforge.net/projects/mod-ruid/files/mod_ruid2/mod_ruid2-%{version}.tar.bz2
 License: Apache Software License version 2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: ea-apache2-devel >= 2.4.0 libcap-devel
+BuildRequires: ea-apache24-devel >= 2.4.0 libcap-devel
 BuildRequires: libtool
 # NOTE: These 2 BuildRequires statements are needed because of a decision
 # we made in EA4 to allow the user to pick and choose which mpm to work
@@ -20,10 +20,10 @@ BuildRequires: libtool
 # because it doesn't know which package to use.  This tells YUM which
 # to use so it can build this MPM.  We may need to revert this opinion
 # in the future.
-BuildRequires: ea-mod_mpm_prefork
-BuildRequires: ea-mod_cgi
-Requires: ea-apache2-mmn = %{_httpd_mmn}
-Requires: ea-apache2 >= 2.4.0 libcap
+BuildRequires: ea-apache24-mod_mpm_prefork
+BuildRequires: ea-apache24-mod_cgi
+Requires: ea-aapache24-mmn = %{_httpd_mmn}
+Requires: ea-apache24 >= 2.4.0 libcap
 Obsoletes: mod_ruid mod_ruid2
 
 Patch0: 0001-mailman-compatibility.patch
@@ -37,7 +37,7 @@ and after receiving a new request suids again. If you want to run apache modules
 WebDAV, PHP, and so on under user's right, this module is useful.
 
 %prep
-: Building %{name} %{version}-%{release} %{_arch} ea-apache2-mmn = %{_httpd_mmn}
+: Building %{name} %{version}-%{release} %{_arch} ea-apache24-mmn = %{_httpd_mmn}
 %setup -q -n %{module_name}-%{version}
 %patch0 -p1 -b .mailman
 %patch1 -p1 -b .rgroupinherit
@@ -67,8 +67,11 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu May 28 2015 Julian Brown <julian.brown@cpanel.net> 0.9.8-4
+- Now uses ea-apache24 RPM provided by EA4
+
 * Mon Mar 16 2015 S. Kurt Newman <kurt.newman@cpanel.net> 0.9.8-3
-- Now uses ea-apache2 RPM provided by EA4
+- Now uses ea-apache24 RPM provided by EA4
 
 * Thu Jan 08 2014 S. Kurt Newman <kurt.newman@cpanel.net> 0.9.8-2
 - Updated for Apache 2.4 directory locations
