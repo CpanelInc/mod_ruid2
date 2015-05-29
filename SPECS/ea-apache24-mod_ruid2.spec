@@ -22,7 +22,7 @@ BuildRequires: libtool
 # in the future.
 BuildRequires: ea-apache24-mod_mpm_prefork
 BuildRequires: ea-apache24-mod_cgi
-Requires: ea-aapache24-mmn = %{_httpd_mmn}
+Requires: ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24 >= 2.4.0 libcap
 Obsoletes: mod_ruid mod_ruid2
 
