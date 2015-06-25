@@ -12,7 +12,7 @@ URL: http://sourceforge.net/projects/mod-ruid/
 Source0: http://sourceforge.net/projects/mod-ruid/files/mod_ruid2/mod_ruid2-%{version}.tar.bz2
 License: Apache Software License version 2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: ea-apache24-devel >= 2.4.0 libcap-devel
+BuildRequires: %{ns_name}-devel >= 2.4.0 libcap-devel
 BuildRequires: libtool
 # NOTE: These 2 BuildRequires statements are needed because of a decision
 # we made in EA4 to allow the user to pick and choose which mpm to work
@@ -20,11 +20,13 @@ BuildRequires: libtool
 # because it doesn't know which package to use.  This tells YUM which
 # to use so it can build this MPM.  We may need to revert this opinion
 # in the future.
-BuildRequires: ea-apache24-mod_mpm_prefork
-BuildRequires: ea-apache24-mod_cgi
-Requires: ea-apache24-mmn = %{_httpd_mmn}
-Requires: ea-apache24 >= 2.4.0 libcap
+BuildRequires: %{ns_name}-mpm = forked
+BuildRequires: %{ns_name}-mod_cgi
+Requires: %{ns_name}-mmn = %{_httpd_mmn}
+Requires: %{ns_name} >= 2.4.0 libcap
 Obsoletes: mod_ruid mod_ruid2
+Conflicts: %{ns_name}-mod_suexec %{ns_name}-mod_suphp %{ns_name}-mpm_itk
+Provides: %{ns_name}-exec_code_asuser
 
 Patch0: 0001-mailman-compatibility.patch
 Patch1: 0002-added-rgroupinherit-flag.patch
@@ -37,7 +39,7 @@ and after receiving a new request suids again. If you want to run apache modules
 WebDAV, PHP, and so on under user's right, this module is useful.
 
 %prep
-: Building %{name} %{version}-%{release} %{_arch} ea-apache24-mmn = %{_httpd_mmn}
+: Building %{name} %{version}-%{release} %{_arch} %{ns_name}-mmn = %{_httpd_mmn}
 %setup -q -n %{module_name}-%{version}
 %patch0 -p1 -b .mailman
 %patch1 -p1 -b .rgroupinherit
