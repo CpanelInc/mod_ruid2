@@ -6,7 +6,7 @@ Summary: Run all httpd process under user's access right.
 Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
-Release: 6%{dist}
+Release: 7%{dist}
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
 Source0: http://sourceforge.net/projects/mod-ruid/files/mod_ruid2/mod_ruid2-%{version}.tar.bz2
@@ -22,6 +22,7 @@ BuildRequires: libtool
 # in the future.
 BuildRequires: %{ns_name}-mpm = forked
 BuildRequires: %{ns_name}-mod_cgi
+Requires: %{ns_name}-mpm = forked
 Requires: %{ns_name}-mmn = %{_httpd_mmn}
 Requires: %{ns_name} >= 2.4.0 libcap
 Obsoletes: mod_ruid mod_ruid2
@@ -69,6 +70,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue Aug 04 2015 Dan Muey <dan@cpanel.net> 0.9.8-7
+Add forked MPM to requires list
+
 * Wed Jun 02 2015 Darren Mobley <darren@cpanel.net> 0.9.8-6
 - Fixed typo in dependency
 
