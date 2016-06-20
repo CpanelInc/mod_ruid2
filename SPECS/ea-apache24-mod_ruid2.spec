@@ -6,7 +6,9 @@ Summary: Run all httpd process under user's access right.
 Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
-Release: 7%{dist}
+# Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
+%define release_prefix 12
+Release: %{release_prefix}%{?dist}.cpanel
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
 Source0: http://sourceforge.net/projects/mod-ruid/files/mod_ruid2/mod_ruid2-%{version}.tar.bz2
@@ -70,6 +72,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 0.9.8-12
+- EA-4383: Update Release value to OBS-proof versioning
+
 * Tue Aug 04 2015 Dan Muey <dan@cpanel.net> 0.9.8-7
 Add forked MPM to requires list
 
