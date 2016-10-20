@@ -7,7 +7,7 @@ Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
-%define release_prefix 12
+%define release_prefix 13
 Release: %{release_prefix}%{?dist}.cpanel
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
@@ -29,6 +29,7 @@ Requires: %{ns_name}-mmn = %{_httpd_mmn}
 Requires: %{ns_name} >= 2.4.0 libcap
 Obsoletes: mod_ruid mod_ruid2
 Conflicts: %{ns_name}-mod_suexec %{ns_name}-mod_suphp %{ns_name}-mpm_itk
+Conflicts: %{ns_name}-mod_fcgid
 Provides: %{ns_name}-exec_code_asuser
 
 Patch0: 0001-mailman-compatibility.patch
@@ -72,6 +73,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Oct 17 2016 Edwin Buck <e.buck@cpanel.net> - 0.9.8-13
+- EA-5429: Added conflicts with mod_fcgid.
+
 * Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 0.9.8-12
 - EA-4383: Update Release value to OBS-proof versioning
 
