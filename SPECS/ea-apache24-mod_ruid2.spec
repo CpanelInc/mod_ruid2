@@ -7,7 +7,7 @@ Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
-%define release_prefix 14
+%define release_prefix 15
 Release: %{release_prefix}%{?dist}.cpanel
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
@@ -62,7 +62,13 @@ install -m755 %{module_name}.so %{buildroot}%{_httpd_moddir}/
 # Install the config file
 mkdir -p %{buildroot}%{_httpd_modconfdir}
 install -m 644 ruid2.conf %{buildroot}%{_httpd_modconfdir}/
-    
+
+%post
+# We are putting this in to ensure correct behavoir when adding/removing
+# this module
+
+/usr/local/cpanel/bin/apache_conf_distiller --store-data
+
 %clean
 rm -rf %{buildroot}
 
@@ -72,8 +78,17 @@ rm -rf %{buildroot}
 %attr(755,root,root)%{_httpd_moddir}/*.so
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
+%postun
+# Same as above, this ensures the module is removed from
+# store data
+
+/usr/local/cpanel/bin/apache_conf_distiller --store-data
+
 
 %changelog
+* Mon Nov 27 2017 Cory McIntire <cory@cpanelnet> - 0.9.8-15
+- EA-6255: EA4 does not update Apache config dataset
+
 * Tue May 16 2017 Dan Muey <dan@cpanel.net< - 0.9.8-14
 - EA-5973: Conflict w/ Apache mod_cache like ea3 did
 
@@ -125,7 +140,7 @@ Add forked MPM to requires list
 
 * Tue Jan 04 2011 Kees Monshouwer <km|monshouwer_com> 0.9.3-1
 - Update to 0.9.3
-- Fixed: chroot issue with sub-requests caused by mod_rewrite 
+- Fixed: chroot issue with sub-requests caused by mod_rewrite
 
 * Tue Dec 20 2010 Kees Monshouwer <km|monshouwer_com> 0.9.2-1
 - Update to 0.9.2
@@ -135,7 +150,7 @@ Add forked MPM to requires list
 - Update to 0.9.1
 
 * Wed Jun 23 2010 Kees Monshouwer <km|monshouwer_com> 0.9-1
-- Added chroot functionality 
+- Added chroot functionality
 - Update to 0.9
 
 * Mon Jun 21 2010 Kees Monshouwer <km|monshouwer_com> 0.8.2-1
@@ -163,7 +178,7 @@ Add forked MPM to requires list
 
 * Fri Sep 07 2006 Kees Monshouwer <km|monshouwer_com> 0.6-2
 - Fixed some uninitalized vars and a typo
-- Changed the default user and group to apache 
+- Changed the default user and group to apache
 
 * Wed Mar 08 2006 Kees Monshouwer <km|monshouwer_com> 0.6-1
 - Inital build for CentOS 4.2
