@@ -7,7 +7,7 @@ Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
-%define release_prefix 15
+%define release_prefix 16
 Release: %{release_prefix}%{?dist}.cpanel
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
@@ -84,8 +84,15 @@ rm -rf %{buildroot}
 
 /usr/local/cpanel/bin/apache_conf_distiller --store-data
 
+# Make sure that the jailapache tweak-setting is disable upon uninstall
+
+/usr/local/cpanel/bin/whmapi1 set_tweaksetting key=jailapache value=0
+
 
 %changelog
+* Mon Aug 13 2018 Tim Mullin <tim@cpanel.net> - 0.9.8-16
+- EA-6667: Disable apache vhost tweak upon uninstall
+
 * Mon Nov 27 2017 Cory McIntire <cory@cpanelnet> - 0.9.8-15
 - EA-6255: EA4 does not update Apache config dataset
 
