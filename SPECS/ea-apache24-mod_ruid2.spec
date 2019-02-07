@@ -7,7 +7,7 @@ Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
-%define release_prefix 16
+%define release_prefix 17
 Release: %{release_prefix}%{?dist}.cpanel
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
@@ -79,17 +79,21 @@ rm -rf %{buildroot}
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %postun
+if [ $1 == 0 ]; then
+
 # Same as above, this ensures the module is removed from
 # store data
-
 /usr/local/cpanel/bin/apache_conf_distiller --store-data
 
 # Make sure that the jailapache tweak-setting is disable upon uninstall
-
 /usr/local/cpanel/bin/whmapi1 set_tweaksetting key=jailapache value=0
 
+fi
 
 %changelog
+* Tue Jan 05 2019 Tim Mullin <tim@cpanel.net> - 0.9.8-17
+- EA-8192: Don't disable apache vhost tweak for upgrades or downgrades
+
 * Mon Aug 13 2018 Tim Mullin <tim@cpanel.net> - 0.9.8-16
 - EA-6667: Disable apache vhost tweak upon uninstall
 
