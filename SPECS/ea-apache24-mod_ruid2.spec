@@ -7,7 +7,7 @@ Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
-%define release_prefix 17
+%define release_prefix 18
 Release: %{release_prefix}%{?dist}.cpanel
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
@@ -67,7 +67,9 @@ install -m 644 ruid2.conf %{buildroot}%{_httpd_modconfdir}/
 # We are putting this in to ensure correct behavoir when adding/removing
 # this module
 
-/usr/local/cpanel/bin/apache_conf_distiller --store-data
+if [ -x "/usr/local/cpanel/bin/apache_conf_distiller" ]; then
+    /usr/local/cpanel/bin/apache_conf_distiller --store-data
+fi
 
 %clean
 rm -rf %{buildroot}
@@ -83,7 +85,9 @@ if [ $1 == 0 ]; then
 
 # Same as above, this ensures the module is removed from
 # store data
-/usr/local/cpanel/bin/apache_conf_distiller --store-data
+if [ -x "/usr/local/cpanel/bin/apache_conf_distiller" ]; then
+    /usr/local/cpanel/bin/apache_conf_distiller --store-data
+fi
 
 # Make sure that the jailapache tweak-setting is disable upon uninstall
 /usr/local/cpanel/bin/whmapi1 set_tweaksetting key=jailapache value=0
@@ -91,6 +95,9 @@ if [ $1 == 0 ]; then
 fi
 
 %changelog
+* Tue Jul 30 2019 Daniel Muey <dan@cpanel.net> - 0.9.8-18
+- ZC-5378: do not call distiller if its not there
+
 * Tue Jan 05 2019 Tim Mullin <tim@cpanel.net> - 0.9.8-17
 - EA-8192: Don't disable apache vhost tweak for upgrades or downgrades
 
