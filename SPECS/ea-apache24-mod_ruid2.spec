@@ -2,6 +2,10 @@
 %global ns_name ea-apache24
 %global module_name mod_ruid2
 
+%if 0%{?rhel} >= 8
+%global debug_package %{nil}
+%endif
+
 Summary: Run all httpd process under user's access right.
 Name: %{ns_name}-%{module_name}
 Version: 0.9.8
