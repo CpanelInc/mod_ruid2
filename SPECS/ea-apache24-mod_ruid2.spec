@@ -7,8 +7,7 @@
 %endif
 
 Summary: Run all httpd process under user's access right.
-Name: ea-apache24-mod-ruid2
-Provides: ea-apache24-mod_ruid2
+Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
