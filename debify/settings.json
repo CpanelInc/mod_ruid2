@@ -7,9 +7,16 @@
         "_httpd_modconfdir": "%{_httpd_dir}/conf.modules.d",
         "_httpd_confdir": "%{_httpd_dir}/conf.d",
         "_httpd_contentdir": "/usr/share/apache2",
-        "_httpd_moddir": "/usr/lib64/apache2/modules"
+        "_httpd_moddir": "/usr/lib64/apache2/modules",
+        "ea_apr_name": "ea-apr16",
+        "ea_apr_dir": "/opt/cpanel/ea-apr16",
+        "ea_apu_dir": "/opt/cpanel/ea-apr16",
+        "ea_apr_config": "/opt/cpanel/ea-apr16/bin/apr-1-config",
+        "_sysconfdir": "/etc"
     },
     "add_to_build_requires": [
-        "libcap-dev"
+        "libcap-dev",
+        "ea-apr",
+        "ea-apr-util"
     ]
 }
