@@ -1,0 +1,4 @@
+debian/tmp/etc/apache2/conf.modules.d/ruid2.conf /etc/apache2/conf.modules.d
+debian/tmp/usr/lib64/apache2/modules/mod_ruid2.so /usr/lib64/apache2/modules
+LICENSE /usr/share/doc/ea-apache24-mod_ruid2-0.9.8
+README /usr/share/doc/ea-apache24-mod_ruid2-0.9.8
