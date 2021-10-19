@@ -14,6 +14,7 @@
         "ea_apr_config": "/opt/cpanel/ea-apr16/bin/apr-1-config",
         "_sysconfdir": "/etc"
     },
+    "remove_from_requires": [ "libcap" ],
     "add_to_build_requires": [
         "libcap-dev",
         "ea-apr",

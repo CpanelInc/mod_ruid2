@@ -32,7 +32,7 @@ Requires: %{ns_name}-mpm = forked
 Requires: %{ns_name}-mmn = %{_httpd_mmn}
 Requires: %{ns_name} >= 2.4.0 libcap
 Obsoletes: mod_ruid mod_ruid2
-Conflicts: %{ns_name}-mod_suexec %{ns_name}-mod_suphp %{ns_name}-mpm_itk
+Conflicts: %{ns_name}-mod_suexec %{ns_name}-mod_suphp %{ns_name}-mod_mpm_itk
 Conflicts: %{ns_name}-mod_fcgid
 Conflicts: %{ns_name}-mod_cache
 Provides: %{ns_name}-exec_code_asuser
