@@ -2,16 +2,12 @@
 %global ns_name ea-apache24
 %global module_name mod_ruid2
 
-%if 0%{?rhel} >= 8
-%global debug_package %{nil}
-%endif
-
 Summary: Run all httpd process under user's access right.
 Name: %{ns_name}-%{module_name}
 Version: 0.9.8
 Vendor: cPanel, Inc.
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4558 for more details
-%define release_prefix 19
+%define release_prefix 20
 Release: %{release_prefix}%{?dist}.cpanel
 Group: System Environment/Daemons
 URL: http://sourceforge.net/projects/mod-ruid/
@@ -99,6 +95,9 @@ fi
 fi
 
 %changelog
+* Tue May 09 2023 Brian Mendoza <brian.mendoza@cpanel.net> - 0.9.8-20
+- ZC-10936: Clean up Makefile and remove debug-package-nil
+
 * Fri May 22 2020 Julian Brown <julian.brown@cpanel.net> - 0.9.8-19
 - ZC-6852: Fix for C8
 
